@@ -238,7 +238,6 @@ export default class DockerContainer {
 
     const getLayerVersionCommand = new GetLayerVersionCommand({
       LayerName: layerArn,
-      VersionNumber: versionNumber
     })
 
     try {
@@ -247,6 +246,7 @@ export default class DockerContainer {
       try {
         layer = await this.#lambdaClient.send(getLayerVersionCommand)
       } catch (err) {
+        log.warning(err)
         log.warning(`[${layerName}] ${err.code}: ${err.message}`)
 
         return

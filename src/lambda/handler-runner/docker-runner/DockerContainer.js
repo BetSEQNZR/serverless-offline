@@ -227,7 +227,8 @@ export default class DockerContainer {
 
   async #downloadLayer(layerArn, layerDir) {
     const [, layerName] = layerArn.split(':layer:')
-    const [, versionNumber] = layerName.split(":")
+    const versionNumber = layerArn.split(':').pop()
+    const [arnNoVersion] = layerArn.split(`:${versionNumber}`)
     const layerZipFile = `${layerDir}/${layerName}.zip`
     const layerProgress = progress.get(`layer-${layerName}`)
 
@@ -237,7 +238,8 @@ export default class DockerContainer {
     layerProgress.notice(`Retrieving "${layerName}": Getting info`)
 
     const getLayerVersionCommand = new GetLayerVersionCommand({
-      LayerName: layerArn,
+      LayerName: arnNoVersion,
+      VersionNumber: versionNumber,
     })
 
     try {

@@ -1,14 +1,14 @@
-import { createHash } from 'node:crypto'
-import { createWriteStream } from 'node:fs'
-import { readFile, unlink, writeFile } from 'node:fs/promises'
-import { platform } from 'node:os'
-import { dirname, join, sep } from 'node:path'
-import { LambdaClient, GetLayerVersionCommand } from '@aws-sdk/client-lambda'
+import { GetLayerVersionCommand, LambdaClient } from '@aws-sdk/client-lambda'
 import { log, progress } from '@serverless/utils/log.js'
 import { execa } from 'execa'
 import { ensureDir, pathExists } from 'fs-extra'
 import isWsl from 'is-wsl'
 import jszip from 'jszip'
+import { createHash } from 'node:crypto'
+import { createWriteStream } from 'node:fs'
+import { readFile, unlink, writeFile } from 'node:fs/promises'
+import { platform } from 'node:os'
+import { dirname, join, sep } from 'node:path'
 import pRetry from 'p-retry'
 import DockerImage from './DockerImage.js'
 
@@ -227,6 +227,7 @@ export default class DockerContainer {
 
   async #downloadLayer(layerArn, layerDir) {
     const [, layerName] = layerArn.split(':layer:')
+    const [, versionNumber] = layerName.split(":")
     const layerZipFile = `${layerDir}/${layerName}.zip`
     const layerProgress = progress.get(`layer-${layerName}`)
 
@@ -237,6 +238,7 @@ export default class DockerContainer {
 
     const getLayerVersionCommand = new GetLayerVersionCommand({
       LayerName: layerArn,
+      VersionNumber: versionNumber
     })
 
     try {

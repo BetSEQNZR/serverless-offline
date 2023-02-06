@@ -1,6 +1,5 @@
 import { GetLayerVersionCommand, LambdaClient } from '@aws-sdk/client-lambda'
 import { log, progress } from '@serverless/utils/log.js'
-/* eslint-disable no-eval */
 import AWS from 'aws-sdk'
 import { execa } from 'execa'
 import { ensureDir, pathExists } from 'fs-extra'

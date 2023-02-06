@@ -1,5 +1,7 @@
 import { GetLayerVersionCommand, LambdaClient } from '@aws-sdk/client-lambda'
 import { log, progress } from '@serverless/utils/log.js'
+/* eslint-disable no-eval */
+import AWS from 'aws-sdk'
 import { execa } from 'execa'
 import { ensureDir, pathExists } from 'fs-extra'
 import isWsl from 'is-wsl'
@@ -90,6 +92,12 @@ export default class DockerContainer {
       'DOCKER_LAMBDA_STAY_OPEN=1', // API mode
       '-e',
       'DOCKER_LAMBDA_WATCH=1', // Watch mode
+      '-e',
+      `AWS_ACCESS_KEY_ID=${AWS.config.credentials.accessKeyId}`,
+      '-e',
+      `AWS_SECRET_ACCESS_KEY=${AWS.config.credentials.secretAccessKey}`,
+      '-e',
+      `AWS_SESSION_TOKEN=${AWS.config.credentials.sessionToken}`,
     ]
 
     if (this.#layers.length > 0) {
